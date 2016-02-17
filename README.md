@@ -1,2 +1,2 @@
-A simple Chat using socket.io
+A simple Chat using nodejs + socket.io
 

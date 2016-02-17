@@ -1,6 +1,6 @@
 {
   "name": "Chat",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Simple Chat",
   "main": "server.js",
   "scripts": {
@@ -10,13 +10,26 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/cdcunha/simplechat.git"
+    "url": "git+https://github.com/cdcunha/simplechat.git"
   },
   "dependencies": {
     "socket.io": ">=1.4.5",
 	"bootstrap": ">=3.3.6",
     "jquery": ">=2.2.0"
   },
+  "engines": {
+    "node": ">=0.10.35"
+  },
+  "keywords": [
+    "node",
+    "chat",
+    "socket"
+  ],
+  "bugs": {
+    "url": "https://github.com/cdcunha/simplechat/issues"
+  },
+  "homepage": "https://github.com/cdcunha/simplechat#readme",
+  "author": "Charlestown",
   "readme": "A simple chat using socket.io",
   "readmeFilename": "README.md"
 }
