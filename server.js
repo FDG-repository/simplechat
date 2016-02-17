@@ -3,12 +3,12 @@ var http = require('http'),
 	
 var people = {};
 var port = 1337;
-var serverUrl = "10.0.0.104";//"127.0.0.1";
+var serverUrl = "192.168.0.98";//"10.0.0.104";//"127.0.0.1";
 	
 var app = http.createServer(function (request, response) 
 {
 	console.log("Server request: " + request.url)
-	fs.readFile("client.html", 'utf-8', function (error, data) {
+	fs.readFile("chat.html", 'utf-8', function (error, data) {
         response.writeHead(200, {'Content-Type': 'text/html'});
         response.write(data);
         response.end();
@@ -34,9 +34,9 @@ io.sockets.on('connection', function(client) {
     });
 	
 	client.on("disconnect", function(){
-        io.sockets.emit("update", people[client.id] + " has left the server.");
-        delete people[client.id];
-        io.sockets.emit("update-people", people);
+		io.sockets.emit("update", people[client.id] + " has left the server.");
 		console.log(people[client.id] + " was disconnected")
+        delete people[client.id];
+        io.sockets.emit("update-people", people);		
     });
 });

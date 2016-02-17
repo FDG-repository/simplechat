@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="/socket.io/socket.io.js"></script>
+        <title>Simple Chat with nodejs</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="/socket.io/socket.io.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script type="text/javascript">
             $(document).ready(function(){
-				var socketio = io.connect("10.0.0.104:1337");
+				var socketio = io.connect("192.168.0.98:1337");
 				
 				$("#chat").hide();
 				$("#name").focus();
@@ -35,14 +38,6 @@
 					}
 				});
 
-				socketio.on("disconnect", function(msg){
-					$("#msgs").append("<br/>" + msg);
-					//$("#msg").attr("disabled", "disabled");
-					//$("#send").attr("disabled", "disabled");
-					$("#login").show();
-					$("#chat").hide();
-				});
-				
 				$("#join").click(function(){
 					var name = $("#name").val();
 					if (name != "") {
@@ -67,7 +62,7 @@
 						$("#msg").val("");
 					}
 				});
-
+				//If user press enter
 				$("#msg").keypress(function(e){
 					if(e.which == 13) {
 						$("#send").click();
@@ -75,35 +70,43 @@
 				});
 				
 				$("#logoff").click(function(){
-					socketio.emit("disconnect");
+					location.reload();
 				});
 			})
         </script>
     </head>
     <body>
         <div class="container">
-		  <div class="span2">
-			  <ul id="people" class="unstyled"></ul>
-		  </div>
-		  <div class="span4">
-			  <ul id="msgs" class="unstyled">
-		  </div>
-		</div>
-		
-		<div class="container">
-			<div class="span5 offset2" id="login">
-				<form class="form-inline">
-					<input type="text" class="input-small" placeholder="Your name" id="name">
-					<input type="button" name="join" id="join" value="Join" class="btn btn-primary">
-				</form>
-			</div>
-			
-			<div class="span5 offset2" id="chat">
-				<form id="2" class="form-inline">
-					<input type="text" class="input" placeholder="Your message" id="msg">
-					<input type="button" name="send" id="send" value="Send" class="btn btn-success">
-					<input type="button" name="logoff" id="logoff" value="Disconnect" class="btn btn-danger">
-				</form>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="jumbotron">
+						<div class="span2">
+						  <ul id="people" class="unstyled"></ul>
+						</div>
+						<div class="span4">
+						  <ul id="msgs" class="unstyled">
+						</div>
+					</div>
+				</div>
+				
+				<div class="panel-footer">
+					<div class="row">
+						<div id="login" style="height: calc(100% - 40px); overflow: auto;">
+							<form class="form-inline">
+								<input type="text" class="input-small" placeholder="Your name" id="name" data-toggle="tooltip" title="Type your name and press ENTER">
+								<input type="button" name="join" id="join" value="Join" class="btn btn-primary">
+							</form>
+						</div>
+						
+						<div id="chat" style="height: 40px;">
+							<form id="2" class="form-inline">
+								<input type="text" class="input" placeholder="Your message" id="msg" data-toggle="tooltip" title="Type your message and press ENTER to send">
+								<input type="button" name="send" id="send" value="Send" class="btn btn-success">
+								<input type="button" name="logoff" id="logoff" value="Disconnect" class="btn btn-danger">
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
     </body>
