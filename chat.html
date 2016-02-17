@@ -10,7 +10,9 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script type="text/javascript">
             $(document).ready(function(){
-				var socketio = io.connect("192.168.0.98:1337");
+			    var serverUrl = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+				var port = process.env.OPENSHIFT_NODEJS_PORT || "1337";
+				var socketio = io.connect(serverUrl + ":" + port);
 				
 				$("#chat").hide();
 				$("#name").focus();
