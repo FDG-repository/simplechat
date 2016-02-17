@@ -29,7 +29,9 @@
     "url": "https://github.com/cdcunha/simplechat/issues"
   },
   "homepage": "https://github.com/cdcunha/simplechat#readme",
-  "author": "Charlestown",
+  "author": { "name" : "Charlestown Cunha"
+            , "email" : "cdcunha@gmail.com"
+  },
   "readme": "A simple chat using socket.io",
   "readmeFilename": "README.md"
 }
