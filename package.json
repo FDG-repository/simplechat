@@ -1,5 +1,5 @@
 {
-  "name": "Chat",
+  "name": "SimpleChat",
   "version": "0.0.5",
   "description": "Simple Chat",
   "main": "server.js",
