@@ -10,9 +10,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script type="text/javascript">
             $(document).ready(function(){
-			    var serverUrl = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-				var port = process.env.OPENSHIFT_NODEJS_PORT || "1337";
-				var socketio = io.connect(serverUrl + ":" + port);
+			    var socketio = io.connect('http://nodejs-cdcunha.rhcloud.com:8000/', {'forceNew':true });
 				
 				$("#chat").hide();
 				$("#name").focus();
