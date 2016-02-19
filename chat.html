@@ -10,7 +10,8 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script type="text/javascript">
             $(document).ready(function(){
-			    var socketio = io.connect('http://nodejs-cdcunha.rhcloud.com:8000/', {'forceNew':true });
+			    //var socketio = io.connect('http://nodejs-cdcunha.rhcloud.com:8000/', {'forceNew':true });
+				var socketio = io.connect('127.0.0.1:1337', {'forceNew':true });
 				
 				$("#chat").hide();
 				$("#name").focus();
@@ -79,12 +80,14 @@
         <div class="container-fluid">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<div class="jumbotron">
-						<div class="span2">
-						  <ul id="people" class="unstyled"></ul>
-						</div>
+					<div class="col-sm-2">
 						<div class="span4">
 						  <ul id="msgs" class="unstyled">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="span2">
+						  <ul id="people" class="unstyled"></ul>
 						</div>
 					</div>
 				</div>

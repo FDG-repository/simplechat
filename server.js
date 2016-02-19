@@ -2,8 +2,10 @@ var http = require('http'),
     fs = require('fs');
 	
 var people = {};
-var port = process.env.OPENSHIFT_NODEJS_PORT || "1337";
-var serverUrl = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";//"192.168.0.98";//"10.0.0.104";//"127.0.0.1";
+//var port = process.env.OPENSHIFT_NODEJS_PORT || "1337";
+var port = "1337";
+//var serverUrl = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var serverUrl = "127.0.0.1";
 	
 var app = http.createServer(function (request, response) 
 {
