@@ -9,11 +9,32 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script type="text/javascript">
-            $(document).ready(function(){
-			    //var socketio = io.connect('http://nodejs-cdcunha.rhcloud.com:8000/', {'forceNew':true });
-				var socketio = io.connect('127.0.0.1:1337', {'forceNew':true });
+            //var socketio = io.connect('http://nodejs-cdcunha.rhcloud.com:8000/', {'forceNew':true });
+			var socketio = io.connect('127.0.0.1:1337', {'forceNew':true });
+			
+			function msgTo(ID)
+			{
+				if (isConnected()){
+					if ($("#msg").val() != ""){
+						socketio.emit("sendTo", ID, $("#msg").val(), $("#name").val());
+						$("#msg").val("");
+					}
+				}
+			}
+			
+			function isConnected()
+			{
+				if (!socketio.connected)
+				{
+					alert('Sorry, the connection was lost');
+				}
+				return socketio.connected;
+			}
+			
+			$(document).ready(function(){
+				var ready = false;
 				
-				$("#chat").hide();
+				$(".chat").hide();
 				$("#name").focus();
 				$("form").submit(function(event){
 					event.preventDefault();
@@ -28,7 +49,7 @@
 					if(ready) {
 						$("#people").empty();
 						$.each(people, function(clientid, name) {
-							$('#people').append("<br/>" + name + "");
+							$('#people').append("<br/>" + name["html"] + "");
 						});
 					}
 				});
@@ -38,15 +59,31 @@
 						$("#msgs").append("<br/>" + who + " says: " + msg + "");
 					}
 				});
-
+				
+				socketio.on("messageMe", function(who, msg){
+					if(ready) {
+						$("#msgs").append("<br/>" + who + " says: " + msg + "");
+					}
+				});
+				
+				socketio.on('connect', function() {
+					console.log('Connected');
+				});
+				
+				socketio.on('disconnect', function () {
+					console.log("Disconnected");  
+				});
+				
 				$("#join").click(function(){
 					var name = $("#name").val();
 					if (name != "") {
-						socketio.emit("join", name );
-						$("#login").hide();//detach();
-						$("#chat").show();
-						$("#msg").focus();
-						ready = true;
+						if (isConnected()){
+							socketio.emit("join", name );
+							$("#login").hide();//detach();
+							$(".chat").show();
+							$("#msg").focus();
+							ready = true;
+						}
 					}
 				});
 				//If user press enter
@@ -57,10 +94,12 @@
 				});
 				
 				$("#send").click(function(){
-					var msg = $("#msg").val();
-					if (msg != ""){
-						socketio.emit("send", msg);
-						$("#msg").val("");
+					if (isConnected()){
+						var msg = $("#msg").val();
+						if (msg != ""){
+							socketio.emit("sendAll", msg, $("#name").val());
+							$("#msg").val("");
+						}
 					}
 				});
 				//If user press enter
@@ -71,7 +110,13 @@
 				});
 				
 				$("#logoff").click(function(){
-					location.reload();
+					$("#name").val("");
+					$("#msgs").empty();
+					$("#people").empty();
+					$("#login").show();
+					$(".chat").hide();
+					socketio.disconnect();
+					location.reload(true)
 				});
 			})
         </script>
@@ -79,19 +124,20 @@
     <body>
         <div class="container-fluid">
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<div class="col-sm-2">
-						<div class="span4">
+				<div class="chat panel-heading">
+					<div class="row">
+						<div class="col-sm-1 span2">
+						  <ul id="people" class="unstyled"></ul>
+						</div>
+						<div class="col-sm-11 span4">
 						  <ul id="msgs" class="unstyled">
 						</div>
 					</div>
-					<div class="col-sm-2">
-						<div class="span2">
-						  <ul id="people" class="unstyled"></ul>
-						</div>
-					</div>
 				</div>
-				
+			</div>
+		</div>
+		<div class="container-fluid">
+			<div class="panel panel-default">
 				<div class="panel-footer">
 					<div class="row">
 						<div id="login" style="height: calc(100% - 40px); overflow: auto;">
@@ -101,7 +147,7 @@
 							</form>
 						</div>
 						
-						<div id="chat" style="height: 40px;">
+						<div id="chat" class="chat" style="height: 40px;">
 							<form id="2" class="form-inline">
 								<input type="text" class="input" placeholder="Your message" id="msg" data-toggle="tooltip" title="Type your message and press ENTER to send">
 								<input type="button" name="send" id="send" value="Send" class="btn btn-success">

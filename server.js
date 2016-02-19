@@ -9,7 +9,7 @@ var serverUrl = "127.0.0.1";
 	
 var app = http.createServer(function (request, response) 
 {
-	console.log("Server request: " + request.url)
+	//console.log("Server request: " + request.url)
 	fs.readFile("chat.html", 'utf-8', function (error, data) {
         response.writeHead(200, {'Content-Type': 'text/html'});
         response.write(data);
@@ -20,25 +20,48 @@ var app = http.createServer(function (request, response)
 console.log("Listening at " + serverUrl + ":" + port);
 
 var io = require('socket.io').listen(app);
+
 io.sockets.on('connection', function(client) {
     client.emit('connected');
 	client.on("join", function(name){
-        people[client.id] = name; //data["name"];
-        //client.emit("update", "You have connected to the server.");
-        io.sockets.emit("update", name + " has joined the server.")
-        io.sockets.emit("update-people", people);
+        people[client.id] = {name:name, html:'<span onclick="msgTo(\''+client.id+'\')" title="Type a message and click here to send in private">'+name+'</span>'}; //data["name"];
+		io.sockets.to(client.id).emit('messageMe', 'Server', 'You have connected.');
+		io.sockets.emit("update", name + " has joined the server.")
+		io.sockets.emit("update-people", people);
 		console.log("New join: " + name);
     });
 	
-	client.on("send", function(msg){
-        console.log("Send message by " + people[client.id] + ": " + msg);
-		io.sockets.emit("chat", people[client.id], msg);		
+	client.on('sendTo', function(id, msg, name){
+		if (people[client.id] == undefined || people[client.id] == null)
+		{
+			people[client.id] = {name:name, html:'<span onclick="msgTo(\''+client.id+'\')" title="Type a message and click here to send in private">'+name+'</span>'}; //data["name"];
+			io.sockets.to(client.id).emit('messageMe', 'Server', 'You have connected.');
+			io.sockets.emit("update", name + " has joined the server.")
+			io.sockets.emit("update-people", people);
+			console.log("New join: " + name);
+		}
+		io.sockets.to(id).emit('messageMe', people[client.id]["name"] + '<span style="color:red"> in PVT</span>', msg);
+	});
+	
+	client.on("sendAll", function(msg, name){
+        if (people[client.id] == undefined || people[client.id] == null)
+		{
+			people[client.id] = {name:name, html:'<span onclick="msgTo(\''+client.id+'\')" title="Type a message and click here to send in private">'+name+'</span>'}; //data["name"];
+			io.sockets.to(client.id).emit('messageMe', 'Server', 'You have connected.');
+			io.sockets.emit("update", name + " has joined the server.")
+			io.sockets.emit("update-people", people);
+			console.log("New join: " + name);
+		}
+		//console.log("Send message by " + people[client.id] + ": " + msg);
+		io.sockets.emit("chat", people[client.id]["name"], msg);		
     });
 	
 	client.on("disconnect", function(){
-		io.sockets.emit("update", people[client.id] + " has left the server.");
-		console.log(people[client.id] + " was disconnected")
-        delete people[client.id];
-        io.sockets.emit("update-people", people);		
+		if (people[client.id] != undefined){
+			io.sockets.emit("update", people[client.id]["name"] + " has left the server.");
+			console.log(people[client.id]["name"] + " was disconnected")
+			delete people[client.id];
+			io.sockets.emit("update-people", people);
+		}
     });
 });
