@@ -41,6 +41,7 @@ io.sockets.on('connection', function(client) {
 			console.log("New join: " + name);
 		}
 		io.sockets.to(id).emit('messageMe', people[client.id]["name"] + '<span style="color:red"> in PVT</span>', msg);
+		io.sockets.to(client.id).emit('messageMe', people[client.id]["name"] + '<span style="color:red"> in PVT</span>', msg);
 	});
 	
 	client.on("sendAll", function(msg, name){
